@@ -22,6 +22,7 @@ photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 
                                  photosystem_partitioning_coef = 0.5,
                                  theta = 0.85,
                                  phi_psii_tresp = 'no',
+                                 jmax_tresp = 'yes',
                                  b_tresp = 0.0474,
                                  c_tresp = 0.000859,
                                  rec_a = 0.42137,
@@ -55,7 +56,11 @@ photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 
     phi_psii
   }
   
-  jmax <- jmax25 * calc_jmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = 25)
+  if(jmax_tresp == 'no'){
+    jmax <- jmax25
+  }else if(jmax_tresp == 'yes'){
+    jmax <- jmax25 * calc_jmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = 25)
+  }
   m <- (ci_pa - gammastar_pa) / (ci_pa + (2 * gammastar_pa))
   psii_light <- absorbance * photosystem_partitioning_coef * par # light getting to psii
   j_a <- theta
@@ -91,7 +96,9 @@ photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 
                         "j_c" = j_c,
                         "j" = j,
                         "aj" = aj,
-                        "a" = a)
+                        "a" = a,
+                        "phi_psii_tresp" = phi_psii_tresp,
+                        "jmax_tresp" = jmax_tresp)
   
   results
   

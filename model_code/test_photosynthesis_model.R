@@ -12,7 +12,8 @@ source('photosynthesis_model.R')
 
 ## run model
 
-t_response_rec <- photosynthesis_model(temperature_c = seq(5, 50, 5), phi_psii_tresp = "rec")
+t_response_rec1 <- photosynthesis_model(temperature_c = seq(5, 50, 5), phi_psii_tresp = "rec", jmax_tresp = 'yes')
+t_response_rec2 <- photosynthesis_model(temperature_c = seq(5, 50, 5), phi_psii_tresp = "rec", jmax_tresp = 'no')
 
 co2_response <- photosynthesis_model(ca_ppm = seq(200, 2000, 50))
 
