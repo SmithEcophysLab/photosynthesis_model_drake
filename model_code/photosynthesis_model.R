@@ -15,7 +15,9 @@ sourceDirectory('functions', modifiedOnly = FALSE)
 
 photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 25, par = 400,
                                  tmean = 25,
-                                 vcmax25 = 100, jmax25 = 200,
+                                 vcmax_ref = 100, jmax_ref = 200,
+                                 t_ref = 25,
+                                 ci = ci,
                                  phi_psii = 0.6895, # rate at 25C from Bernacchi
                                  e_partitioning_coef = 4, 
                                  absorbance = 0.85, 
@@ -39,8 +41,8 @@ photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 
   patm_pa <- calc_patm(elevation_m) # atmospheric pressure (Pa)
   ca_pa <- ca_ppm * 1e-6 * patm_pa # atmospheric co2 (Pa)
   
-  vcmax <- vcmax25 * calc_vcmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = 25)
-  ci_pa <- 0.7 * ca_pa # intercellular co2 (Pa)
+  vcmax <- vcmax_ref * calc_vcmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = t_ref)
+  ci_pa <- ci * 1e-6 * patm_pa # intercellular co2 (Pa)
   gammastar_pa <- calc_gammastar_pa(temperature_c, elevation_m) # co2 compensation point (Pa)
   km_pa <- calc_km_pa(temperature_c, elevation_m) # michaelis-menten coefficient for rubisco (Pa)
   mc = (ci_pa - gammastar_pa) / (ci_pa + km_pa) # 
@@ -57,9 +59,9 @@ photosynthesis_model <- function(elevation_m = 0, ca_ppm = 420, temperature_c = 
   }
   
   if(jmax_tresp == 'no'){
-    jmax <- jmax25
+    jmax <- jmax_ref
   }else if(jmax_tresp == 'yes'){
-    jmax <- jmax25 * calc_jmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = 25)
+    jmax <- jmax_ref * calc_jmax_tresp_mult(tleaf = temperature_c, tmean = tmean, tref = t_ref)
   }
   m <- (ci_pa - gammastar_pa) / (ci_pa + (2 * gammastar_pa))
   psii_light <- absorbance * photosystem_partitioning_coef * par # light getting to psii
